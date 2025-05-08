@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface IUserRepo {
     Optional<User> findByEmail(String email);
     User CreateAdmin(User user);
+    User save(User user);
 }

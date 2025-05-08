@@ -26,4 +26,9 @@ public class UserRepo implements IUserRepo {
     public User CreateAdmin(User user) {
         return jpaUserRepo.save(user);
     }
+
+    @Override
+    public User save(User user) {
+        return user;
+    }
 }
