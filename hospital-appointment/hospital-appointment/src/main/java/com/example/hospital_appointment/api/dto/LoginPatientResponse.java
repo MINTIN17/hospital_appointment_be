@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginResponse
+public class LoginPatientResponse
 {
     private String token;
     private PatientDTO patient;
 
-    public LoginResponse(String token, PatientDTO patient) {
+    public LoginPatientResponse(String token, PatientDTO patient) {
         this.token = token;
         this.patient = patient;
     }

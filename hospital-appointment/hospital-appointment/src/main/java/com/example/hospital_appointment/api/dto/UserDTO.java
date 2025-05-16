@@ -1,6 +1,7 @@
 package com.example.hospital_appointment.api.dto;
 
 import com.example.hospital_appointment.domain.Enums.Gender;
+import com.example.hospital_appointment.domain.Enums.Role;
 import com.example.hospital_appointment.domain.model.Patient;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class UserDTO {
     private LocalDate dateOfBirth;
     private String avatarUrl;
     private String address;
+    private Role role;
     private boolean enabled;
     // constructors, getters, setters
 }

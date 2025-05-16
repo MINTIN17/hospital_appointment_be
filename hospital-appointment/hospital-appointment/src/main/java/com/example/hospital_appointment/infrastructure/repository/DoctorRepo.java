@@ -7,6 +7,7 @@ import com.example.hospital_appointment.infrastructure.repository.jpa.JpaDoctorR
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DoctorRepo implements IDoctorRepo {
@@ -25,5 +26,10 @@ public class DoctorRepo implements IDoctorRepo {
     @Override
     public List<Doctor> findByUser_Hospital_Id(Long hospitalId) {
         return jpaDoctorRepo.findBySpecialization_Hospital_Id(hospitalId);
+    }
+
+    @Override
+    public Optional<Doctor> findByemail(String email) {
+        return jpaDoctorRepo.findByUserEmail(email);
     }
 }

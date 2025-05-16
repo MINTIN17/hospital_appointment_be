@@ -1,13 +1,14 @@
 package com.example.hospital_appointment.api.controller;
 
-import com.example.hospital_appointment.api.dto.LoginRequest;
-import com.example.hospital_appointment.api.dto.LoginResponse;
-import com.example.hospital_appointment.api.dto.PatientDTO;
-import com.example.hospital_appointment.api.dto.RegisterRequest;
+import com.example.hospital_appointment.api.dto.*;
 import com.example.hospital_appointment.application.service.interfaces.IAuthService;
 import com.example.hospital_appointment.application.service.interfaces.IPatientService;
+import com.example.hospital_appointment.application.service.interfaces.IUserService;
+import com.example.hospital_appointment.domain.Enums.Role;
+import com.example.hospital_appointment.domain.model.Doctor;
 import com.example.hospital_appointment.domain.model.Patient;
 import com.example.hospital_appointment.domain.model.User;
+import com.example.hospital_appointment.infrastructure.mapper.DoctorMapper;
 import com.example.hospital_appointment.infrastructure.mapper.PatientMapper;
 import com.example.hospital_appointment.infrastructure.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,13 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final IPatientService patientService;
     private final IAuthService authService;
+    private final IUserService userService;
 
-    public AuthController(JwtUtil jwtUtil, IPatientService patientService, IAuthService authService) {
+    public AuthController(JwtUtil jwtUtil, IPatientService patientService, IAuthService authService, IUserService userService) {
         this.jwtUtil = jwtUtil;
         this.patientService = patientService;
         this.authService = authService;
+        this.userService = userService;
     }
 
     @PostMapping("/register")
@@ -59,11 +62,18 @@ public class AuthController {
             }
 
             String token = authService.login(request.getEmail(), request.getPassword());
-            Patient patient = authService.findByUserEmail(request.getEmail())
-                    .orElseThrow(() -> new RuntimeException("Patient not found"));
+            User user = userService.findByEmail(request.getEmail());
+            if (user.getRole() == Role.PATIENT) {
+                Patient patient = authService.findByPatientEmail(request.getEmail())
+                        .orElseThrow(() -> new RuntimeException("Patient not found"));
+                PatientDTO patientDTO = PatientMapper.toDTO(patient);
+                return ResponseEntity.ok(new LoginPatientResponse(token, patientDTO));
+            }
+            Doctor doctor = authService.findByDoctorEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
+            DoctorResponse doctorResponse = DoctorMapper.toDoctorResponse(doctor);
+            return ResponseEntity.ok(new LoginDoctorResponse(token, doctorResponse));
 
-            PatientDTO patientDTO = PatientMapper.toDTO(patient);
-            return ResponseEntity.ok(new LoginResponse(token, patientDTO));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
