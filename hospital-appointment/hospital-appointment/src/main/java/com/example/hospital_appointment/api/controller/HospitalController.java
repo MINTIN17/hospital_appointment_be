@@ -54,9 +54,10 @@ public class HospitalController {
         }
 
         String token = authHeader.substring(7);
-        if (!jwtUtil.checkToken(token, "ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+        if (!jwtUtil.checkToken(token, "ADMIN") && !jwtUtil.checkToken(token, "PATIENT")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins or Patients only");
         }
+
 
         List<Hospital> hospitals = hospitalService.getAllHospital();
         return ResponseEntity.ok(hospitals);

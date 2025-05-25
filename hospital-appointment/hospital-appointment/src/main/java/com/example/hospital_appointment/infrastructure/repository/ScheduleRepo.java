@@ -7,6 +7,7 @@ import com.example.hospital_appointment.infrastructure.repository.jpa.JpaSchedul
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ScheduleRepo implements IScheduleRepo {
@@ -23,7 +24,17 @@ public class ScheduleRepo implements IScheduleRepo {
     }
 
     @Override
+    public Schedule Change(Schedule schedule) {
+        return jpaScheduleRepo.save(schedule);
+    }
+
+    @Override
     public List<Schedule> getSchedulesByDoctorId(Long doctorId) {
         return jpaScheduleRepo.findByDoctorId(doctorId);
+    }
+
+    @Override
+    public Optional<Schedule> getScheduleById(Long scheduleId) {
+        return jpaScheduleRepo.findById(scheduleId);
     }
 }

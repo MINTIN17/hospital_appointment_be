@@ -31,6 +31,5 @@ public class DoctorResponse
     private String address;
     private String specialization_name;
     private String hospital_name;
-    private Role role;
     private int yearsOfExperience;
 }

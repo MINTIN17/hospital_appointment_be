@@ -60,7 +60,7 @@ public class DoctorController {
         }
 
         String token = authHeader.substring(7);
-        if (!jwtUtil.checkToken(token, "ADMIN")) {
+        if (!jwtUtil.checkToken(token, "ADMIN") && !jwtUtil.checkToken(token, "PATIENT")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
         }
 

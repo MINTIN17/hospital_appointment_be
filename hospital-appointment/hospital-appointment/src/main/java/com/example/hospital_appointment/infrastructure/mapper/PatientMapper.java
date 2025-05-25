@@ -37,7 +37,6 @@ public class PatientMapper {
         userDTO.setDateOfBirth(user.getDateOfBirth());
         userDTO.setAvatarUrl(user.getAvatarUrl());
         userDTO.setAddress(user.getAddress());
-        userDTO.setRole(user.getRole());
         userDTO.setEnabled(user.isEnabled());
 
         PatientDTO patientDTO = new PatientDTO();

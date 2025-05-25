@@ -49,7 +49,6 @@ public class DoctorMapper {
                 .dateOfBirth(doctor.getUser().getDateOfBirth())
                 .avatarUrl(doctor.getUser().getAvatarUrl())
                 .address(doctor.getUser().getAddress())
-                .role(Role.DOCTOR)
                 .yearsOfExperience(doctor.getYearsOfExperience())
                 .specialization_name(doctor.getSpecialization().getName())
                 .hospital_name(doctor.getSpecialization().getHospital().getName())

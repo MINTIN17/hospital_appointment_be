@@ -19,7 +19,6 @@ public class UserDTO {
     private LocalDate dateOfBirth;
     private String avatarUrl;
     private String address;
-    private Role role;
     private boolean enabled;
     // constructors, getters, setters
 }
