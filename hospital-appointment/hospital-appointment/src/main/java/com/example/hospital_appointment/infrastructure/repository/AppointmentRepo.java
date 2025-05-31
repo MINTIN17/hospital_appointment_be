@@ -36,6 +36,23 @@ public class AppointmentRepo implements IAppointmentRepo {
                                          doctor_id);
     }
 
+    @Override
+    public String confirmAppointment(Long id) {
+        Appointment appointment = jpaAppointment.findById(id)
+                .orElseThrow(() -> new RuntimeException("appointment not found"));
+        appointment.setStatus(AppointmentStatus.CONFIRMED);
+        jpaAppointment.save(appointment);
+        return "confirm appointment";
+    }
+
+    @Override
+    public String cancelAppointment(Long id) {
+        Appointment appointment = jpaAppointment.findById(id)
+                .orElseThrow(() -> new RuntimeException("appointment not found"));
+        appointment.setStatus(AppointmentStatus.CANCELLED);
+        jpaAppointment.save(appointment);
+        return "cancelled appointment";
+    }
 
 
 }

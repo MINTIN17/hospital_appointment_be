@@ -49,4 +49,14 @@ public class AppointmentService implements IAppointmentService {
         Appointment appointment = AppointmentMapper.toAppointment(appointmentRequest, patient, doctor);
         return appointmentRepo.save(appointment);
     }
+
+    @Override
+    public String confirmAppointment(Long id) {
+        return appointmentRepo.confirmAppointment(id);
+    }
+
+    @Override
+    public String cancelAppointment(Long id) {
+        return appointmentRepo.cancelAppointment(id);
+    }
 }

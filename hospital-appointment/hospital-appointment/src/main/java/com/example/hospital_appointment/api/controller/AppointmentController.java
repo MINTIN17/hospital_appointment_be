@@ -33,4 +33,30 @@ public class AppointmentController {
         }
         return ResponseEntity.ok(appointmentService.BookAppointment(appointmentRequest));
     }
+
+    @PutMapping("/confirmAppointment")
+    public ResponseEntity<String> confirmAppointment(@RequestParam("appointment_id") Long appointment_id, @RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "DOCTOR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: doctor only");
+        }
+        return ResponseEntity.ok(appointmentService.confirmAppointment(appointment_id));
+    }
+
+    @PutMapping("/cancelAppointment")
+    public ResponseEntity<String> cancelAppointment(@RequestParam("appointment_id") Long appointment_id, @RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "DOCTOR") && !jwtUtil.checkToken(token, "PATIENT")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: patient and doctor only");
+        }
+        return ResponseEntity.ok(appointmentService.cancelAppointment(appointment_id));
+    }
 }

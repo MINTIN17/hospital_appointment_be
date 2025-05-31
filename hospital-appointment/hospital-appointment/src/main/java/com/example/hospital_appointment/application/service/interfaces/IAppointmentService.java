@@ -5,5 +5,7 @@ import com.example.hospital_appointment.domain.model.Appointment;
 
 public interface IAppointmentService {
     String BookAppointment(AppointmentRequest appointmentRequest);
+    String confirmAppointment(Long id);
+    String cancelAppointment(Long id);
 
 }
