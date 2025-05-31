@@ -4,7 +4,8 @@ import com.example.hospital_appointment.domain.Enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -27,9 +28,9 @@ public class Appointment {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
     private AppointmentStatus status;
-    private LocalDateTime appointmentDate;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-
+    private LocalDate appointmentDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private String description;
 }
 

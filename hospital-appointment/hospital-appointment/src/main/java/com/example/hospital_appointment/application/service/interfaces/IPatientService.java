@@ -7,6 +7,7 @@ import java.util.List;
 public interface IPatientService {
     Patient create(Patient patient);
     List<Patient> getAllPatients();
+    Patient getPatientById(Long id);
     String Ban(Long patient_id);
     String unBan(Long patient_id);
 }

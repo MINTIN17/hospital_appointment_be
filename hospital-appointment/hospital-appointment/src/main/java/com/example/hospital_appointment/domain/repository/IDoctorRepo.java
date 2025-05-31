@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface IDoctorRepo {
     Doctor save(Doctor doctor);
+    Optional<Doctor> findById(Long id);
     List<Doctor> findByUser_Hospital_Id(Long hospitalId);
     Optional<Doctor> findByemail(String email);
 

@@ -25,6 +25,11 @@ public class PatientService implements IPatientService {
     }
 
     @Override
+    public Patient getPatientById(Long id) {
+        return patientRepository.findById(id).get();
+    }
+
+    @Override
     public String Ban(Long patient_id) {
         return patientRepository.Ban(patient_id);
     }
