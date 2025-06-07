@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -52,6 +53,11 @@ public class AppointmentRepo implements IAppointmentRepo {
         appointment.setStatus(AppointmentStatus.CANCELLED);
         jpaAppointment.save(appointment);
         return "cancelled appointment";
+    }
+
+    @Override
+    public List<Appointment> findByDoctorIdAndAppointmentDateInAndStatusIn(Long doctorId, List<LocalDate> next7Days, List<AppointmentStatus> appointmentStatus) {
+        return jpaAppointment.findByDoctorIdAndAppointmentDateInAndStatusIn(doctorId, next7Days, appointmentStatus);
     }
 
 

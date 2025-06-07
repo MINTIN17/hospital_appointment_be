@@ -34,11 +34,31 @@ public class ScheduleController {
         }
 
         String token = authHeader.substring(7);
-        if (!jwtUtil.checkToken(token, "DOCTOR") && !jwtUtil.checkToken(token, "PATIENT")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+        if (!jwtUtil.checkToken(token, "DOCTOR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: doctor only");
         }
 
         List<ScheduleResponse> schedules = scheduleService.getSchedules(doctor_id)
+                .stream()
+                .map(ScheduleMapper::toScheduleResponse) // gọi map từng item
+                .toList();
+
+        return ResponseEntity.ok(schedules);
+    }
+
+    @GetMapping("/getSchedulesWithAvailability")
+    public ResponseEntity<?> getSchedulesWithAvailability(@RequestParam("doctor_id") Long doctor_id, @RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "PATIENT")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: patient only");
+        }
+
+        List<ScheduleResponse> schedules = scheduleService.getSchedulesWithAvailability(doctor_id)
                 .stream()
                 .map(ScheduleMapper::toScheduleResponse) // gọi map từng item
                 .toList();

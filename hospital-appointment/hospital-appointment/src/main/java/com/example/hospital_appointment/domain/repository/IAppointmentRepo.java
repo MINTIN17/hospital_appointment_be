@@ -1,9 +1,11 @@
 package com.example.hospital_appointment.domain.repository;
 
+import com.example.hospital_appointment.domain.Enums.AppointmentStatus;
 import com.example.hospital_appointment.domain.model.Appointment;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface IAppointmentRepo {
@@ -13,4 +15,5 @@ public interface IAppointmentRepo {
                                     LocalTime endTime, Long doctor_id);
     String confirmAppointment(Long id);
     String cancelAppointment(Long id);
+    List<Appointment> findByDoctorIdAndAppointmentDateInAndStatusIn(Long doctorId,List<LocalDate> next7Days, List<AppointmentStatus> appointmentStatus);
 }

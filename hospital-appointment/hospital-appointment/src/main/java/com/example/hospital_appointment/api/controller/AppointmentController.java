@@ -5,6 +5,7 @@ import com.example.hospital_appointment.api.dto.AppointmentRequest;
 import com.example.hospital_appointment.application.service.AppointmentService;
 import com.example.hospital_appointment.domain.model.Appointment;
 import com.example.hospital_appointment.infrastructure.security.JwtUtil;
+import com.example.hospital_appointment.infrastructure.websocket.publisher.SlotBookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,12 @@ public class AppointmentController {
 
     private final JwtUtil jwtUtil;
     private final AppointmentService appointmentService;
+    private final SlotBookingService slotBookingService;
 
-    public AppointmentController(JwtUtil jwtUtil, AppointmentService appointmentService) {
+    public AppointmentController(JwtUtil jwtUtil, AppointmentService appointmentService, SlotBookingService slotBookingService) {
         this.jwtUtil = jwtUtil;
         this.appointmentService = appointmentService;
+        this.slotBookingService = slotBookingService;
     }
 
     @PostMapping("/createAppointment")
@@ -29,9 +32,10 @@ public class AppointmentController {
 
         String token = authHeader.substring(7);
         if (!jwtUtil.checkToken(token, "PATIENT")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: PATIENT only");
         }
-        return ResponseEntity.ok(appointmentService.BookAppointment(appointmentRequest));
+
+        return ResponseEntity.ok(slotBookingService.bookSlot(appointmentRequest));
     }
 
     @PutMapping("/confirmAppointment")
