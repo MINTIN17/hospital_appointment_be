@@ -1,6 +1,8 @@
 package com.example.hospital_appointment.application.service;
 
 import com.example.hospital_appointment.api.dto.AppointmentRequest;
+import com.example.hospital_appointment.api.dto.AppointmentResponse;
+import com.example.hospital_appointment.api.dto.ScheduleResponse;
 import com.example.hospital_appointment.application.exception.ResourceNotFoundException;
 import com.example.hospital_appointment.application.service.interfaces.IAppointmentService;
 import com.example.hospital_appointment.domain.Enums.AppointmentStatus;
@@ -11,10 +13,12 @@ import com.example.hospital_appointment.domain.repository.IAppointmentRepo;
 import com.example.hospital_appointment.domain.repository.IDoctorRepo;
 import com.example.hospital_appointment.domain.repository.IPatientRepo;
 import com.example.hospital_appointment.infrastructure.mapper.AppointmentMapper;
+import com.example.hospital_appointment.infrastructure.mapper.ScheduleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.print.Doc;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,6 +55,14 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
+    public List<AppointmentResponse> getDoctorAppointment(Long doctor_id) {
+        return appointmentRepo.getDoctorAppointment(doctor_id)
+                .stream()
+                .map(AppointmentMapper::toAppointmentResponse)
+                .toList();
+    }
+
+    @Override
     public String confirmAppointment(Long id) {
         return appointmentRepo.confirmAppointment(id);
     }
@@ -58,5 +70,10 @@ public class AppointmentService implements IAppointmentService {
     @Override
     public String cancelAppointment(Long id) {
         return appointmentRepo.cancelAppointment(id);
+    }
+
+    @Override
+    public String completeAppointment(Long id) {
+        return appointmentRepo.completeAppointment(id);
     }
 }

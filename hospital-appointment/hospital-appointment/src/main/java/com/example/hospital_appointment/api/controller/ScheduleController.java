@@ -60,7 +60,7 @@ public class ScheduleController {
 
         List<ScheduleResponse> schedules = scheduleService.getSchedulesWithAvailability(doctor_id)
                 .stream()
-                .map(ScheduleMapper::toScheduleResponse) // gọi map từng item
+                .map(ScheduleMapper::toScheduleResponse)
                 .toList();
 
         return ResponseEntity.ok(schedules);

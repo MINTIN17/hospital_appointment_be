@@ -38,6 +38,11 @@ public class AppointmentRepo implements IAppointmentRepo {
     }
 
     @Override
+    public List<Appointment> getDoctorAppointment(Long doctor_id) {
+        return jpaAppointment.findByDoctor_Id(doctor_id);
+    }
+
+    @Override
     public String confirmAppointment(Long id) {
         Appointment appointment = jpaAppointment.findById(id)
                 .orElseThrow(() -> new RuntimeException("appointment not found"));
@@ -53,6 +58,15 @@ public class AppointmentRepo implements IAppointmentRepo {
         appointment.setStatus(AppointmentStatus.CANCELLED);
         jpaAppointment.save(appointment);
         return "cancelled appointment";
+    }
+
+    @Override
+    public String completeAppointment(Long id) {
+        Appointment appointment = jpaAppointment.findById(id)
+                .orElseThrow(() -> new RuntimeException("appointment not found"));
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        jpaAppointment.save(appointment);
+        return "complete appointment";
     }
 
     @Override
