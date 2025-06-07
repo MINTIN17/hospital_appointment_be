@@ -9,6 +9,7 @@ import java.util.List;
 public interface IAppointmentService {
     String BookAppointment(AppointmentRequest appointmentRequest);
     List<AppointmentResponse> getDoctorAppointment(Long doctor_id);
+    List<AppointmentResponse> getPatientAppointment(Long patient_id);
     String confirmAppointment(Long id);
     String cancelAppointment(Long id);
     String completeAppointment(Long id);

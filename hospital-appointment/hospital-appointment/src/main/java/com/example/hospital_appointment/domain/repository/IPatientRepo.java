@@ -10,6 +10,7 @@ public interface IPatientRepo {
     Optional<Patient> findByUserEmail(String email);
     List<Patient> findAll();
     Optional<Patient> findById(Long id);
+    String updateName(Long patient_id, String newName);
     String Ban(Long id);
     String unBan(Long id);
 }

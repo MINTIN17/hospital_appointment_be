@@ -14,6 +14,7 @@ public interface IAppointmentRepo {
     Optional<Appointment> findExist(LocalDate appointmentDate, LocalTime startTime,
                                     LocalTime endTime, Long doctor_id);
     List<Appointment> getDoctorAppointment(Long doctor_id);
+    List<Appointment> getPatientAppointment(Long patient_id);
     String confirmAppointment(Long id);
     String cancelAppointment(Long id);
     String completeAppointment(Long id);

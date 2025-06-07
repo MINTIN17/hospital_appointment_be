@@ -43,6 +43,11 @@ public class PatientRepo implements IPatientRepo {
     }
 
     @Override
+    public String updateName(Long patient_id, String newName) {
+        return "";
+    }
+
+    @Override
     @Transactional
     public String Ban(Long id) {
         Patient patient = jpaPatientRepo.findById(id)
