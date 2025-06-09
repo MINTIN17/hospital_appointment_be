@@ -3,6 +3,7 @@ package com.example.hospital_appointment.api.controller;
 import com.example.hospital_appointment.api.dto.DoctorResponse;
 import com.example.hospital_appointment.api.dto.PatientDTO;
 import com.example.hospital_appointment.application.service.interfaces.IPatientService;
+import com.example.hospital_appointment.domain.Enums.Gender;
 import com.example.hospital_appointment.domain.model.Patient;
 import com.example.hospital_appointment.api.dto.RegisterRequest;
 import com.example.hospital_appointment.infrastructure.mapper.DoctorMapper;
@@ -100,21 +101,21 @@ public class PatientController {
         return ResponseEntity.ok(patientService.updateName(patient_id, name));
     }
 
-//    @PutMapping("/changeGender")
-//    public ResponseEntity<?> changeGender(@RequestParam("patient_id") Long patient_id, @RequestParam("gender") String gender,
-//                                          @RequestHeader("Authorization") String authHeader) {
-//
-//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
-//        }
-//
-//        String token = authHeader.substring(7);
-//        if (!jwtUtil.checkToken(token, "ADMIN")) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
-//        }
-//
-//        return ResponseEntity.ok(patientService.updateGender(gender));
-//    }
+    @PutMapping("/changeGender")
+    public ResponseEntity<?> changeGender(@RequestParam("patient_id") Long patient_id, @RequestParam("gender") Gender gender,
+                                          @RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "PATIENT")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Patient only");
+        }
+
+        return ResponseEntity.ok(patientService.updateGender(patient_id, gender));
+    }
 
     @PutMapping("/changeBirthday")
     public ResponseEntity<?> changeBirthday(@RequestParam("patient_id") Long patient_id, @RequestParam("birthday") LocalDate birthday,
@@ -125,8 +126,8 @@ public class PatientController {
         }
 
         String token = authHeader.substring(7);
-        if (!jwtUtil.checkToken(token, "ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+        if (!jwtUtil.checkToken(token, "PATIENT")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Patient only");
         }
 
         return ResponseEntity.ok(patientService.updateBirthday(patient_id, birthday));
@@ -141,8 +142,8 @@ public class PatientController {
         }
 
         String token = authHeader.substring(7);
-        if (!jwtUtil.checkToken(token, "ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+        if (!jwtUtil.checkToken(token, "PATIENT")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Patient only");
         }
 
         return ResponseEntity.ok(patientService.updateAddress(patient_id, address));

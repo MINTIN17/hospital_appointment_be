@@ -71,6 +71,14 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
+    public List<AppointmentResponse> getCurrentAppointment(Long doctor_id) {
+        return appointmentRepo.getCurrentAppointment(doctor_id)
+                .stream()
+                .map(AppointmentMapper::toAppointmentResponse)
+                .toList();
+    }
+
+    @Override
     public String confirmAppointment(Long id) {
         return appointmentRepo.confirmAppointment(id);
     }

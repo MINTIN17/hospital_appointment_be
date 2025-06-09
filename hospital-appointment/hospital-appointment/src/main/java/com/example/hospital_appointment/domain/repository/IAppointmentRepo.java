@@ -15,6 +15,7 @@ public interface IAppointmentRepo {
                                     LocalTime endTime, Long doctor_id);
     List<Appointment> getDoctorAppointment(Long doctor_id);
     List<Appointment> getPatientAppointment(Long patient_id);
+    List<Appointment> getCurrentAppointment(Long doctor_id);
     String confirmAppointment(Long id);
     String cancelAppointment(Long id);
     String completeAppointment(Long id);

@@ -101,8 +101,21 @@ public class AppointmentController {
 
         String token = authHeader.substring(7);
         if (!jwtUtil.checkToken(token, "DOCTOR")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: patient and doctor only");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: doctor and doctor only");
         }
         return ResponseEntity.ok(appointmentService.completeAppointment(appointment_id));
+    }
+
+    @GetMapping("/getCurrentAppointment")
+    public ResponseEntity<?> getCurrentAppointment(@RequestParam("doctor_id") Long doctor_id, @RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "DOCTOR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: doctor and doctor only");
+        }
+        return ResponseEntity.ok(appointmentService.getCurrentAppointment(doctor_id));
     }
 }

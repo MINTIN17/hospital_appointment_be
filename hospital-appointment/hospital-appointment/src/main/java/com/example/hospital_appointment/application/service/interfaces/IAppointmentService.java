@@ -10,6 +10,7 @@ public interface IAppointmentService {
     String BookAppointment(AppointmentRequest appointmentRequest);
     List<AppointmentResponse> getDoctorAppointment(Long doctor_id);
     List<AppointmentResponse> getPatientAppointment(Long patient_id);
+    List<AppointmentResponse> getCurrentAppointment(Long doctor_id);
     String confirmAppointment(Long id);
     String cancelAppointment(Long id);
     String completeAppointment(Long id);

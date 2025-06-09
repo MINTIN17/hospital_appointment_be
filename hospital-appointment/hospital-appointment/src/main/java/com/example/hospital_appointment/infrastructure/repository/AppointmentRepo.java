@@ -48,6 +48,14 @@ public class AppointmentRepo implements IAppointmentRepo {
     }
 
     @Override
+    public List<Appointment> getCurrentAppointment(Long doctor_id) {
+        return jpaAppointment.findByDoctorIdAndStatusIn(
+                doctor_id,
+                List.of(AppointmentStatus.CONFIRMED, AppointmentStatus.COMPLETED)
+        );
+    }
+
+    @Override
     public String confirmAppointment(Long id) {
         Appointment appointment = jpaAppointment.findById(id)
                 .orElseThrow(() -> new RuntimeException("appointment not found"));
