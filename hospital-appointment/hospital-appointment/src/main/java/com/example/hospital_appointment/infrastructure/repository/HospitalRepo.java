@@ -16,6 +16,10 @@ public class HospitalRepo implements IHospitalRepo {
         this.jpaHospitalRepo = jpaHospitalRepo;
     }
 
+    public long count() {
+        return jpaHospitalRepo.count();
+    }
+
     @Override
     public Hospital save(Hospital hospital) {
         return jpaHospitalRepo.save(hospital);
