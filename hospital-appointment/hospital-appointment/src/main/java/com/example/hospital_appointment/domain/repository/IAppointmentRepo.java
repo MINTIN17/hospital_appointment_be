@@ -13,6 +13,7 @@ public interface IAppointmentRepo {
     Boolean CheckAppointment(Appointment appointment);
     Optional<Appointment> findExist(LocalDate appointmentDate, LocalTime startTime,
                                     LocalTime endTime, Long doctor_id);
+    List<Appointment> getAllAppointment();
     List<Appointment> getDoctorAppointment(Long doctor_id);
     List<Appointment> getPatientAppointment(Long patient_id);
     List<Appointment> getCurrentAppointment(Long doctor_id);

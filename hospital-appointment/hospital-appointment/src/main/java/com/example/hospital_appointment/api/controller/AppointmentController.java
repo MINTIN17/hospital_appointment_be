@@ -39,6 +39,20 @@ public class AppointmentController {
         return ResponseEntity.ok(slotBookingService.bookSlot(appointmentRequest));
     }
 
+    @GetMapping("/getAllAppointment")
+    public ResponseEntity<?> getAllAppointment(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admin only");
+        }
+
+        return ResponseEntity.ok(appointmentService.getAllAppointment());
+    }
+
     @GetMapping("/getDoctorAppointment")
     public ResponseEntity<?> getDoctorAppointment(@RequestParam("doctor_id") Long doctor_id, @RequestHeader("Authorization") String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
