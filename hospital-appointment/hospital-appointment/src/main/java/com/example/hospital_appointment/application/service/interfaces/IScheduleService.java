@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface IScheduleService {
     List<Schedule> getSchedules(Long doctorId);
-    void updateAvailability(List<ScheduleAvailableRequest> updates);
+    String updateAvailability(List<ScheduleAvailableRequest> updates);
     List<Schedule> getSchedulesWithAvailability(Long doctorId);
 }

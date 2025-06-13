@@ -67,16 +67,22 @@ public class ScheduleController {
     }
 
     @PutMapping("/availability")
-    public ResponseEntity<?> updateAvailability(@RequestBody List<ScheduleAvailableRequest> updates, @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<String> updateAvailability(@RequestBody List<ScheduleAvailableRequest> updates, @RequestHeader("Authorization") String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
         }
 
         String token = authHeader.substring(7);
         if (!jwtUtil.checkToken(token, "DOCTOR")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: doctor only");
         }
-        scheduleService.updateAvailability(updates);
-        return ResponseEntity.ok().body("Updated availability for " + updates.size() + " schedules.");
+
+        String resultMessage = scheduleService.updateAvailability(updates);
+
+        if ("Update success".equals(resultMessage)) {
+            return ResponseEntity.ok(resultMessage);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(resultMessage);
+        }
     }
 }
