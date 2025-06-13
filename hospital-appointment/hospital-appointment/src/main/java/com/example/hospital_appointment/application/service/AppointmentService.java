@@ -6,9 +6,7 @@ import com.example.hospital_appointment.api.dto.ScheduleResponse;
 import com.example.hospital_appointment.application.exception.ResourceNotFoundException;
 import com.example.hospital_appointment.application.service.interfaces.IAppointmentService;
 import com.example.hospital_appointment.domain.Enums.AppointmentStatus;
-import com.example.hospital_appointment.domain.model.Appointment;
-import com.example.hospital_appointment.domain.model.Doctor;
-import com.example.hospital_appointment.domain.model.Patient;
+import com.example.hospital_appointment.domain.model.*;
 import com.example.hospital_appointment.domain.repository.IAppointmentRepo;
 import com.example.hospital_appointment.domain.repository.IDoctorRepo;
 import com.example.hospital_appointment.domain.repository.IPatientRepo;
@@ -29,6 +27,8 @@ public class AppointmentService implements IAppointmentService {
     private IDoctorRepo doctorRepo;
     @Autowired
     private IPatientRepo patientRepo;
+    @Autowired
+    private EmailSender emailSender;
 
     @Override
     public String BookAppointment(AppointmentRequest appointmentRequest) {
@@ -88,11 +88,71 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public String confirmAppointment(Long id) {
+        Optional<Appointment> appointmentOpt = appointmentRepo.findById(id);
+        if (appointmentOpt.isPresent()) {
+            Appointment appointment = appointmentOpt.get();
+            Doctor doctor = appointment.getDoctor();
+            Specialization specialization = doctor.getSpecialization();
+            Hospital hospital = specialization.getHospital();
+            Patient patient = appointment.getPatient();
+
+            String content = String.format(
+                    "Bệnh nhân: %s\n" +
+                            "Bạn đã được xác nhận lịch khám với bác sĩ %s\n" +
+                            "Tại bệnh viện: %s\n" +
+                            "Địa chỉ: %s\n" +
+                            "Thời gian: %s đến %s\n" +
+                            "Ngày: %s",
+                    patient.getUser().getName(),
+                    doctor.getUser().getName(),
+                    hospital.getName(),
+                    hospital.getAddress(),
+                    appointment.getStartTime().toString(),
+                    appointment.getEndTime().toString(),
+                    appointment.getAppointmentDate().toString()
+            );
+
+            emailSender.send(
+                    patient.getUser().getEmail(),
+                    "Xác nhận lịch hẹn",
+                    content
+            );
+        }
         return appointmentRepo.confirmAppointment(id);
     }
 
     @Override
     public String cancelAppointment(Long id) {
+        Optional<Appointment> appointmentOpt = appointmentRepo.findById(id);
+        if (appointmentOpt.isPresent()) {
+            Appointment appointment = appointmentOpt.get();
+            Doctor doctor = appointment.getDoctor();
+            Specialization specialization = doctor.getSpecialization();
+            Hospital hospital = specialization.getHospital();
+            Patient patient = appointment.getPatient();
+
+            String content = String.format(
+                    "Bệnh nhân: %s\n" +
+                            "Bác sĩ %s đã hủy lịch hẹn với bạn\n" +
+                            "Tại bệnh viện: %s\n" +
+                            "Địa chỉ: %s\n" +
+                            "Thời gian: %s đến %s\n" +
+                            "Ngày: %s",
+                    patient.getUser().getName(),
+                    doctor.getUser().getName(),
+                    hospital.getName(),
+                    hospital.getAddress(),
+                    appointment.getStartTime().toString(),
+                    appointment.getEndTime().toString(),
+                    appointment.getAppointmentDate().toString()
+            );
+
+            emailSender.send(
+                    patient.getUser().getEmail(),
+                    "Hủy lịch hẹn",
+                    content
+            );
+        }
         return appointmentRepo.cancelAppointment(id);
     }
 

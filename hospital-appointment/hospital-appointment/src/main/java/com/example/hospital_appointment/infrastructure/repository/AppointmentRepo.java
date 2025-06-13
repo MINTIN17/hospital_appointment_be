@@ -25,6 +25,11 @@ public class AppointmentRepo implements IAppointmentRepo {
     }
 
     @Override
+    public Optional<Appointment> findById(Long id) {
+        return jpaAppointment.findById(id);
+    }
+
+    @Override
     public Boolean CheckAppointment(Appointment appointment) {
         AppointmentStatus status = appointment.getStatus();
         return status == AppointmentStatus.PENDING || status == AppointmentStatus.CONFIRMED;

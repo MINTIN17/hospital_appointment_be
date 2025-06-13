@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface IAppointmentRepo {
     String save(Appointment appointment);
+    Optional<Appointment> findById(Long id);
     Boolean CheckAppointment(Appointment appointment);
     Optional<Appointment> findExist(LocalDate appointmentDate, LocalTime startTime,
                                     LocalTime endTime, Long doctor_id);
