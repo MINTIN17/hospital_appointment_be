@@ -81,4 +81,30 @@ public class AuthService implements IAuthService {
 
         return jwtUtil.generateToken(email, user.get().getRole());
     }
+
+    @Override
+    public String changePassword(String oldPassword, String newPassword, Long patient_id) {
+        Optional<Patient> optionalPatient = patientRepository.findById(patient_id);
+        if (optionalPatient.isEmpty()) {
+            return "Patient not found";
+        }
+
+        Patient patient = optionalPatient.get();
+        User user = patient.getUser();
+
+        // Kiểm tra mật khẩu cũ có đúng không
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            return "Old password is incorrect";
+        }
+
+        // Mã hóa mật khẩu mới
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedNewPassword);
+        patient.setUser(user);
+
+        // Lưu lại bệnh nhân đã đổi mật khẩu
+        patientRepository.save(patient);
+
+        return "Password changed successfully";
+    }
 }

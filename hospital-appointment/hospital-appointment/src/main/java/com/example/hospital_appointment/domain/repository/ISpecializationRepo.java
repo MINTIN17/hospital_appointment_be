@@ -10,4 +10,5 @@ public interface ISpecializationRepo {
     List<Specialization> findByHospital(Long hospital_id);
     Boolean existsByNameAndHospital(String name, Hospital hospital);
     Specialization findById(Long id);
+    Integer countByHospitalId(Long id);
 }

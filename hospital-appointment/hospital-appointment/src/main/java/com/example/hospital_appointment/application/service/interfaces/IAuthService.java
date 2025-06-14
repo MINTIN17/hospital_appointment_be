@@ -13,4 +13,5 @@ public interface IAuthService {
     Optional<Doctor> findByDoctorEmail(String email);
     Optional<User> CheckAdmin(String email, String password);
     String login(String username, String password);
+    String changePassword(String oldPassword, String newPassword, Long patient_id);
 }

@@ -38,4 +38,9 @@ public class SpecializationRepo implements ISpecializationRepo {
                 .orElseThrow(() -> new RuntimeException("Specialization not found"));
     }
 
+    @Override
+    public Integer countByHospitalId(Long id) {
+        return jpaSpecialization.countByHospitalId(id);
+    }
+
 }

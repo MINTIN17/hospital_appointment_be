@@ -37,4 +37,9 @@ public class DoctorRepo implements IDoctorRepo {
     public Optional<Doctor> findByemail(String email) {
         return jpaDoctorRepo.findByUserEmail(email);
     }
+
+    @Override
+    public Integer countByHospitalId(Long hospital_id) {
+        return jpaDoctorRepo.countByHospitalId(hospital_id);
+    }
 }

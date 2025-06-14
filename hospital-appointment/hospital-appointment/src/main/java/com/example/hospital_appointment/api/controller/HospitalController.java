@@ -1,6 +1,7 @@
 package com.example.hospital_appointment.api.controller;
 
 import com.example.hospital_appointment.api.dto.HospitalRequest;
+import com.example.hospital_appointment.api.dto.HospitalResponse;
 import com.example.hospital_appointment.api.dto.RegisterRequest;
 import com.example.hospital_appointment.application.service.interfaces.IHospitalService;
 import com.example.hospital_appointment.domain.model.Hospital;
@@ -59,7 +60,7 @@ public class HospitalController {
         }
 
 
-        List<Hospital> hospitals = hospitalService.getAllHospital();
+        List<HospitalResponse> hospitals = hospitalService.getAllHospital();
         return ResponseEntity.ok(hospitals);
     }
 
