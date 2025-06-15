@@ -23,4 +23,45 @@ public interface JpaAppointment extends JpaRepository<Appointment, Long> {
             List<AppointmentStatus> statuses
     );
     List<Appointment> findByDoctorIdAndStatusIn(Long doctorId, List<AppointmentStatus> statuses);
+
+    @Query("SELECT a.status, COUNT(a) " +
+            "FROM Appointment a " +
+            "WHERE a.status IN (:statuses) " +
+            "AND a.appointmentDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY a.status")
+    List<Object[]> countAppointmentsByStatuses(
+            @Param("statuses") List<AppointmentStatus> statuses,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+    SELECT a.doctor.specialization.hospital.name, COUNT(a)
+    FROM Appointment a
+    WHERE a.status = :status
+      AND a.appointmentDate BETWEEN :startDate AND :endDate
+    GROUP BY a.doctor.specialization.hospital.name """)
+    List<Object[]> countAppointmentsByHospital(
+            @Param("status") AppointmentStatus status,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("SELECT a.doctor.id, a.doctor.user.name, a.status, COUNT(a) " +
+            "FROM Appointment a " +
+            "WHERE a.status IN :statuses AND a.appointmentDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY a.doctor.id, a.doctor.user.name, a.status")
+    List<Object[]> countAppointmentsByDoctor(
+            @Param("statuses") List<AppointmentStatus> statuses,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("SELECT a.patient.id, a.appointmentDate " +
+            "FROM Appointment a " +
+            "WHERE a.status = :status " +
+            "ORDER BY a.patient.id, a.appointmentDate")
+    List<Object[]> findCompletedAppointments(@Param("status") AppointmentStatus status);
+
+
 }

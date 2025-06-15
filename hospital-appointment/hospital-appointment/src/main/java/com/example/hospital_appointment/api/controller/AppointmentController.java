@@ -4,12 +4,18 @@ import com.example.hospital_appointment.api.dto.AppointmentRequest;
 
 import com.example.hospital_appointment.application.service.AppointmentService;
 import com.example.hospital_appointment.application.service.interfaces.IAppointmentService;
+import com.example.hospital_appointment.domain.Enums.AppointmentStatus;
 import com.example.hospital_appointment.domain.model.Appointment;
 import com.example.hospital_appointment.infrastructure.security.JwtUtil;
 import com.example.hospital_appointment.infrastructure.websocket.publisher.SlotBookingService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/appointment")
@@ -131,5 +137,68 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: doctor and doctor only");
         }
         return ResponseEntity.ok(appointmentService.getCurrentAppointment(doctor_id));
+    }
+
+    @GetMapping("/getCountAppointment")
+    public ResponseEntity<?> getCountAppointment(@RequestHeader("Authorization") String authHeader,
+                                                 @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                 @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admin and doctor only");
+        }
+        Map<AppointmentStatus, Long> statusCounts = appointmentService.countAppointmentsByStatus(startDate, endDate);
+        Map<String, Long> response = new HashMap<>();
+
+        for (Map.Entry<AppointmentStatus, Long> entry : statusCounts.entrySet()) {
+            response.put(entry.getKey().name(), entry.getValue());
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getCountAppointmentHospital")
+    public ResponseEntity<?> getCountAppointmentHospital(@RequestHeader("Authorization") String authHeader,
+                                                 @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                 @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admin and doctor only");
+        }
+
+        return ResponseEntity.ok(appointmentService.countAppointmentsByHospital(startDate, endDate));
+    }
+
+    @GetMapping("/getCountAppointmentDoctor")
+    public ResponseEntity<?> getCountAppointmentDoctor(@RequestHeader("Authorization") String authHeader,
+                                                         @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                         @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admin and doctor only");
+        }
+
+        return ResponseEntity.ok(appointmentService.countAppointmentsByDoctor(startDate, endDate));
+    }
+
+    @GetMapping("/revisit-rate")
+    public ResponseEntity<?> getRevisitRate(@RequestParam(defaultValue = "120") int days) {
+        double rate = appointmentService.calculateRevisitRate(days);
+        Map<String, Object> response = new HashMap<>();
+        response.put("daysWindow", days);
+        response.put("revisitRate", String.format("%.2f%%", rate));
+        return ResponseEntity.ok(response);
     }
 }

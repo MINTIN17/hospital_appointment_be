@@ -16,8 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.print.Doc;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Service
 public class AppointmentService implements IAppointmentService {
@@ -160,4 +161,105 @@ public class AppointmentService implements IAppointmentService {
     public String completeAppointment(Long id) {
         return appointmentRepo.completeAppointment(id);
     }
+
+    @Override
+    public Map<AppointmentStatus, Long> countAppointmentsByStatus(LocalDate startDate, LocalDate endDate) {
+        List<AppointmentStatus> filterStatuses = Arrays.asList(
+                AppointmentStatus.COMPLETED,
+                AppointmentStatus.CANCELLED
+        );
+
+        List<Object[]> results = appointmentRepo.countAppointmentsByStatus(filterStatuses, startDate, endDate);
+        Map<AppointmentStatus, Long> statusCounts = new EnumMap<>(AppointmentStatus.class);
+
+        for (Object[] row : results) {
+            AppointmentStatus status = (AppointmentStatus) row[0];
+            Long count = (Long) row[1];
+            statusCounts.put(status, count);
+        }
+
+        // Đảm bảo luôn có đủ key
+        for (AppointmentStatus status : filterStatuses) {
+            statusCounts.putIfAbsent(status, 0L);
+        }
+
+        return statusCounts;
+    }
+
+    @Override
+    public Map<String, Long> countAppointmentsByHospital(LocalDate startDate, LocalDate endDate) {
+        List<Object[]> results = appointmentRepo.countAppointmentsByHospital(AppointmentStatus.COMPLETED, startDate, endDate);
+        Map<String, Long> hospitalCounts = new HashMap<>();
+
+        for (Object[] row : results) {
+            String hospitalName = (String) row[0];
+            Long count = (Long) row[1];
+            hospitalCounts.put(hospitalName, count);
+        }
+
+        return hospitalCounts;
+    }
+
+    @Override
+    public List<Map<String, Object>> countAppointmentsByDoctor(LocalDate startDate, LocalDate endDate) {
+        List<Object[]> results = appointmentRepo.countAppointmentsByDoctor(
+                List.of(AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED), startDate, endDate
+        );
+
+        Map<String, Map<String, Object>> summary = new HashMap<>();
+        for (Object[] row : results) {
+            String doctorName = (String) row[1];
+            AppointmentStatus status = (AppointmentStatus) row[2];
+            Long count = (Long) row[3];
+
+            summary.putIfAbsent(doctorName, new HashMap<>());
+            Map<String, Object> doctorStats = summary.get(doctorName);
+            doctorStats.put("doctorName", doctorName);
+            doctorStats.put(status.name().toLowerCase(), count);
+        }
+
+        // Bổ sung nếu thiếu key
+        for (Map<String, Object> stats : summary.values()) {
+            stats.putIfAbsent("completed", 0L);
+            stats.putIfAbsent("cancelled", 0L);
+        }
+
+        return new ArrayList<>(summary.values());
+    }
+
+    @Override
+    public double calculateRevisitRate(int daysWindow) {
+        List<Object[]> results = appointmentRepo.findCompletedAppointments(AppointmentStatus.COMPLETED);
+
+        Map<Long, List<LocalDate>> patientAppointments = new HashMap<>();
+        for (Object[] row : results) {
+            Long patientId = (Long) row[0];
+            LocalDate date = (LocalDate) row[1];
+
+            patientAppointments.computeIfAbsent(patientId, k -> new ArrayList<>()).add(date);
+        }
+
+        int totalPatients = patientAppointments.size();
+        int revisitCount = 0;
+
+        for (List<LocalDate> dates : patientAppointments.values()) {
+            if (dates.size() < 2) continue;
+            dates.sort(Comparator.naturalOrder());
+
+            boolean hasRevisit = false;
+            for (int i = 1; i < dates.size(); i++) {
+                long diff = ChronoUnit.DAYS.between(dates.get(i - 1), dates.get(i));
+                if (diff <= daysWindow) {
+                    hasRevisit = true;
+                    break;
+                }
+            }
+
+            if (hasRevisit) revisitCount++;
+        }
+
+        return totalPatients == 0 ? 0.0 : (revisitCount * 100.0 / totalPatients);
+    }
+
+
 }

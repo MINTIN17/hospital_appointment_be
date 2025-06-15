@@ -22,4 +22,8 @@ public interface IAppointmentRepo {
     String cancelAppointment(Long id);
     String completeAppointment(Long id);
     List<Appointment> findByDoctorIdAndAppointmentDateInAndStatusIn(Long doctorId,List<LocalDate> next7Days, List<AppointmentStatus> appointmentStatus);
+    List<Object[]> countAppointmentsByStatus(List<AppointmentStatus> statuses, LocalDate startDate, LocalDate endDate);
+    List<Object[]> countAppointmentsByHospital(AppointmentStatus statuses, LocalDate startDate, LocalDate endDate);
+    List<Object[]> countAppointmentsByDoctor(List<AppointmentStatus>  statuses, LocalDate startDate, LocalDate endDate);
+    List<Object[]> findCompletedAppointments(AppointmentStatus status);
 }

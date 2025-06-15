@@ -97,5 +97,25 @@ public class AppointmentRepo implements IAppointmentRepo {
         return jpaAppointment.findByDoctorIdAndAppointmentDateInAndStatusIn(doctorId, next7Days, appointmentStatus);
     }
 
+    @Override
+    public List<Object[]> countAppointmentsByStatus(List<AppointmentStatus> statuses, LocalDate startDate, LocalDate endDate) {
+        return jpaAppointment.countAppointmentsByStatuses(statuses, startDate, endDate);
+    }
+
+    @Override
+    public List<Object[]> countAppointmentsByHospital(AppointmentStatus status, LocalDate startDate, LocalDate endDate) {
+        return jpaAppointment.countAppointmentsByHospital(status, startDate, endDate);
+    }
+
+    @Override
+    public List<Object[]> countAppointmentsByDoctor(List<AppointmentStatus> statuses, LocalDate startDate, LocalDate endDate) {
+        return jpaAppointment.countAppointmentsByDoctor(statuses, startDate, endDate);
+    }
+
+    @Override
+    public List<Object[]> findCompletedAppointments(AppointmentStatus status) {
+        return jpaAppointment.findCompletedAppointments(status);
+    }
+
 
 }
