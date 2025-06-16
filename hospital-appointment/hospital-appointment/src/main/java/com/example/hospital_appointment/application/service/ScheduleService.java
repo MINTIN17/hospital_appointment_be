@@ -107,7 +107,7 @@ public class ScheduleService implements IScheduleService {
                 .findByDoctorIdAndAppointmentDateInAndStatusIn(
                         doctorId,
                         next7Days,
-                        List.of(AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED)
+                        List.of(AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED, AppointmentStatus.COMPLETED)
                 );
 
         List<Schedule> modifiedSchedules = schedules.stream()

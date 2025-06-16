@@ -65,6 +65,6 @@ public class DoctorService implements IDoctorService {
 
     @Override
     public Optional<Doctor> getDoctorByEmail(String email) {
-        return doctorRepo.findByemail(email);
+        return doctorRepo.findByEmail(email);
     }
 }

@@ -38,6 +38,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register").permitAll()
                         .requestMatchers("api/auth/login").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/api/auth/send-otp").permitAll()
+                        .requestMatchers("/api/auth/verify-otp").permitAll()
+                        .requestMatchers("/api/auth/forgot-password").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess

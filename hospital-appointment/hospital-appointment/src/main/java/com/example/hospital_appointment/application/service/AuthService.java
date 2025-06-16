@@ -1,10 +1,12 @@
 package com.example.hospital_appointment.application.service;
 
+import com.example.hospital_appointment.api.dto.ChangePasswordRequest;
+import com.example.hospital_appointment.api.dto.ResetPasswordRequest;
 import com.example.hospital_appointment.application.service.interfaces.IAuthService;
-import com.example.hospital_appointment.domain.model.Doctor;
-import com.example.hospital_appointment.domain.model.Patient;
-import com.example.hospital_appointment.domain.model.User;
+import com.example.hospital_appointment.domain.Enums.Role;
+import com.example.hospital_appointment.domain.model.*;
 import com.example.hospital_appointment.domain.repository.IDoctorRepo;
+import com.example.hospital_appointment.domain.repository.IPasswordResetOtp;
 import com.example.hospital_appointment.domain.repository.IPatientRepo;
 import com.example.hospital_appointment.domain.repository.IUserRepo;
 import com.example.hospital_appointment.infrastructure.security.JwtUtil;
@@ -14,7 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.print.Doc;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +37,12 @@ public class AuthService implements IAuthService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private IPasswordResetOtp passwordResetOtp;
+
+    @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private EmailSender emailSender;
 
     public Patient register(Patient patient) {
         User user = patient.getUser();
@@ -49,7 +58,7 @@ public class AuthService implements IAuthService {
     }
 
     public Optional<Doctor> findByDoctorEmail(String email) {
-        return doctorRepository.findByemail(email);
+        return doctorRepository.findByEmail(email);
     }
 
 
@@ -83,28 +92,79 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public String changePassword(String oldPassword, String newPassword, Long patient_id) {
-        Optional<Patient> optionalPatient = patientRepository.findById(patient_id);
-        if (optionalPatient.isEmpty()) {
-            return "Patient not found";
+    public String changePassword(ChangePasswordRequest request) {
+        User user = null;
+
+        if (request.getRole() == Role.PATIENT) {
+            Optional<Patient> optionalPatient = patientRepository.findById(request.getUser_id());
+            if (optionalPatient.isEmpty()) {
+                return "Patient not found";
+            }
+            Patient patient = optionalPatient.get();
+            user = patient.getUser();
+            if (!passwordEncoder.matches(request.getOld_password(), user.getPassword())) {
+                return "Old password is incorrect";
+            }
+            String encodedNewPassword = passwordEncoder.encode(request.getNew_password());
+            user.setPassword(encodedNewPassword);
+            patient.setUser(user);
+            patientRepository.save(patient);
+        } else if (request.getRole() == Role.DOCTOR) {
+            Optional<Doctor> optionalDoctor = doctorRepository.findById(request.getUser_id());
+            if (optionalDoctor.isEmpty()) {
+                return "Doctor not found";
+            }
+            Doctor doctor = optionalDoctor.get();
+            user = doctor.getUser();
+
+            if (!passwordEncoder.matches(request.getOld_password(), user.getPassword())) {
+                return "Old password is incorrect";
+            }
+
+            String encodedNewPassword = passwordEncoder.encode(request.getNew_password());
+            user.setPassword(encodedNewPassword);
+            doctor.setUser(user);
+            doctorRepository.save(doctor);
+        } else {
+            return "Invalid role";
         }
-
-        Patient patient = optionalPatient.get();
-        User user = patient.getUser();
-
-        // Kiểm tra mật khẩu cũ có đúng không
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            return "Old password is incorrect";
-        }
-
-        // Mã hóa mật khẩu mới
-        String encodedNewPassword = passwordEncoder.encode(newPassword);
-        user.setPassword(encodedNewPassword);
-        patient.setUser(user);
-
-        // Lưu lại bệnh nhân đã đổi mật khẩu
-        patientRepository.save(patient);
 
         return "Password changed successfully";
     }
+
+    @Override
+    public String forgotPassword(ResetPasswordRequest request) {
+        User user = null;
+
+        if (request.getRole() == Role.PATIENT) {
+            Optional<Patient> optionalPatient = patientRepository.findByUserEmail(request.getEmail());
+            if (optionalPatient.isEmpty()) {
+                return "Patient not found";
+            }
+            Patient patient = optionalPatient.get();
+            user = patient.getUser();
+            String encodedNewPassword = passwordEncoder.encode(request.getPassword());
+            user.setPassword(encodedNewPassword);
+            patient.setUser(user);
+            patientRepository.save(patient);
+        } else if (request.getRole() == Role.DOCTOR) {
+            Optional<Doctor> optionalDoctor = doctorRepository.findByEmail(request.getEmail());
+            if (optionalDoctor.isEmpty()) {
+                return "Doctor not found";
+            }
+            Doctor doctor = optionalDoctor.get();
+            user = doctor.getUser();
+
+            String encodedNewPassword = passwordEncoder.encode(request.getPassword());
+            user.setPassword(encodedNewPassword);
+            doctor.setUser(user);
+            doctorRepository.save(doctor);
+        } else {
+            return "Invalid role";
+        }
+
+        return "Reset password successfully";
+    }
+
+
 }

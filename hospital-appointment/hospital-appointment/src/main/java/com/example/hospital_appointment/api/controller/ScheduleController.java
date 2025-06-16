@@ -79,10 +79,6 @@ public class ScheduleController {
 
         String resultMessage = scheduleService.updateAvailability(updates);
 
-        if ("Update success".equals(resultMessage)) {
-            return ResponseEntity.ok(resultMessage);
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(resultMessage);
-        }
+        return ResponseEntity.ok(resultMessage);
     }
 }

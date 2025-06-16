@@ -98,12 +98,33 @@ public class AppointmentService implements IAppointmentService {
             Patient patient = appointment.getPatient();
 
             String content = String.format(
-                    "Bệnh nhân: %s\n" +
-                            "Bạn đã được xác nhận lịch khám với bác sĩ %s\n" +
-                            "Tại bệnh viện: %s\n" +
-                            "Địa chỉ: %s\n" +
-                            "Thời gian: %s đến %s\n" +
-                            "Ngày: %s",
+                    "<div style='"
+                            + "font-family: Arial, sans-serif; "
+                            + "background-color: #f9f9f9; "
+                            + "padding: 20px; "
+                            + "border-radius: 8px; "
+                            + "max-width: 600px; "
+                            + "margin: auto; "
+                            + "box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);'>"
+                            + "<h2 style='color: #2E86C1; text-align: center;'>Xác nhận lịch khám</h2>"
+
+                            + "<p style='font-size: 16px;'><strong>Bệnh nhân:</strong> %s</p>"
+                            + "<p style='font-size: 16px;'>Bạn đã được xác nhận lịch khám với bác sĩ <strong>%s</strong>.</p>"
+                            + "<p style='font-size: 16px;'><strong>Bệnh viện:</strong> %s</p>"
+                            + "<p style='font-size: 16px;'><strong>Địa chỉ:</strong> %s</p>"
+                            + "<p style='font-size: 16px;'><strong>Thời gian:</strong> %s đến %s</p>"
+                            + "<p style='font-size: 16px;'><strong>Ngày:</strong> %s</p>"
+
+                            + "<div style='margin-top: 30px; text-align: center;'>"
+                            + "  <a href='#' style='"
+                            + "    background-color: #2E86C1; "
+                            + "    color: white; "
+                            + "    padding: 10px 20px; "
+                            + "    text-decoration: none; "
+                            + "    border-radius: 5px; "
+                            + "    display: inline-block;'>Xem chi tiết</a>"
+                            + "</div>"
+                            + "</div>",
                     patient.getUser().getName(),
                     doctor.getUser().getName(),
                     hospital.getName(),
@@ -112,6 +133,7 @@ public class AppointmentService implements IAppointmentService {
                     appointment.getEndTime().toString(),
                     appointment.getAppointmentDate().toString()
             );
+
 
             emailSender.send(
                     patient.getUser().getEmail(),

@@ -4,9 +4,8 @@ import com.example.hospital_appointment.domain.Enums.Role;
 import lombok.Data;
 
 @Data
-public class ChangePasswordRequest {
-    private Long user_id;
-    private String old_password;
-    private String new_password;
+public class ResetPasswordRequest {
+    private String email;
+    private String password;
     private Role role;
 }

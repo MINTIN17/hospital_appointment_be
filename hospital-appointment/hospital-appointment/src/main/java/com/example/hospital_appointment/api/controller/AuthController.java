@@ -2,6 +2,7 @@ package com.example.hospital_appointment.api.controller;
 
 import com.example.hospital_appointment.api.dto.*;
 import com.example.hospital_appointment.application.service.interfaces.IAuthService;
+import com.example.hospital_appointment.application.service.interfaces.IPasswordResetOtpService;
 import com.example.hospital_appointment.application.service.interfaces.IPatientService;
 import com.example.hospital_appointment.application.service.interfaces.IUserService;
 import com.example.hospital_appointment.domain.Enums.Role;
@@ -29,12 +30,14 @@ public class AuthController {
     private final IPatientService patientService;
     private final IAuthService authService;
     private final IUserService userService;
+    private final IPasswordResetOtpService passwordResetOtpService;
 
-    public AuthController(JwtUtil jwtUtil, IPatientService patientService, IAuthService authService, IUserService userService) {
+    public AuthController(JwtUtil jwtUtil, IPatientService patientService, IAuthService authService, IUserService userService, IPasswordResetOtpService passwordResetOtpService) {
         this.jwtUtil = jwtUtil;
         this.patientService = patientService;
         this.authService = authService;
         this.userService = userService;
+        this.passwordResetOtpService = passwordResetOtpService;
     }
 
     @PostMapping("/register")
@@ -83,9 +86,32 @@ public class AuthController {
         }
 
         String token = authHeader.substring(7);
-        if (!jwtUtil.checkToken(token, "PATIENT") && !jwtUtil.checkToken(token, "PATIENT")) {
+        if (!jwtUtil.checkToken(token, "PATIENT") && !jwtUtil.checkToken(token, "DOCTOR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: patient and doctor only");
         }
-        return ResponseEntity.ok(authService.changePassword(request.getOld_password(), request.getNew_password(), request.getPatient_id()));
+        return ResponseEntity.ok(authService.changePassword(request));
     }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<?> sendOtp(@RequestParam String email) {
+
+        return ResponseEntity.ok(passwordResetOtpService.sendOtp(email));
+    }
+
+    @PutMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ResetPasswordRequest request) {
+
+        return ResponseEntity.ok(authService.forgotPassword(request));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestParam String email, @RequestParam String otp) {
+        boolean isValid = passwordResetOtpService.verifyOtp(email, otp);
+        if (isValid) {
+            return ResponseEntity.ok("OTP OK");
+        } else {
+            return ResponseEntity.ok("Invalid OTP");
+        }
+    }
+
 }

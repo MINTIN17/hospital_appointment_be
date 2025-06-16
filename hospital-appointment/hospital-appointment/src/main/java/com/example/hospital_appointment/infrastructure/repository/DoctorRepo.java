@@ -34,7 +34,7 @@ public class DoctorRepo implements IDoctorRepo {
     }
 
     @Override
-    public Optional<Doctor> findByemail(String email) {
+    public Optional<Doctor> findByEmail(String email) {
         return jpaDoctorRepo.findByUserEmail(email);
     }
 

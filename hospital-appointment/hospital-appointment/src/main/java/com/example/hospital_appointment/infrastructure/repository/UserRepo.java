@@ -23,6 +23,11 @@ public class UserRepo implements IUserRepo {
     }
 
     @Override
+    public Optional<User> findById(Long id) {
+        return jpaUserRepo.findById(id);
+    }
+
+    @Override
     public User CreateAdmin(User user) {
         return jpaUserRepo.save(user);
     }
