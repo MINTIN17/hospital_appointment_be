@@ -6,6 +6,7 @@ import com.example.hospital_appointment.infrastructure.repository.jpa.JpaDisease
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DiseaseRepo implements IDiseaseRepo {
@@ -23,6 +24,11 @@ public class DiseaseRepo implements IDiseaseRepo {
     @Override
     public Long count() {
         return jpaDiseaserepo.count();
+    }
+
+    @Override
+    public Optional<Disease> findByName(String name) {
+        return jpaDiseaserepo.findByName(name);
     }
 
 }
