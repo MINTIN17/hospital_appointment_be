@@ -27,6 +27,7 @@ public class HospitalMapper {
                 .phone(hospital.getPhone())
                 .doctorCount(doctors)
                 .specializationCount(specialty)
+                .enabled(hospital.isEnabled())
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.example.hospital_appointment.api.controller;
 
 import com.example.hospital_appointment.api.dto.DoctorRequest;
 import com.example.hospital_appointment.api.dto.DoctorResponse;
+import com.example.hospital_appointment.api.dto.DoctorUpdateRequest;
 import com.example.hospital_appointment.api.dto.HospitalRequest;
 import com.example.hospital_appointment.application.service.interfaces.IDoctorService;
 import com.example.hospital_appointment.application.service.interfaces.IPatientService;
@@ -67,6 +68,19 @@ public class DoctorController {
         List<DoctorResponse> doctors = DoctorMapper.toDoctorResponseList(doctorService.getDoctorsByHospital(hospital_id));
 
         return ResponseEntity.ok(doctors);
+    }
+
+    @PutMapping("/updateDoctor")
+    public ResponseEntity<?> updateDoctor(@RequestBody DoctorUpdateRequest request, @RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+        }
+        return ResponseEntity.ok(doctorService.updateDoctor(request));
     }
 
     @PutMapping("/ban")

@@ -16,4 +16,5 @@ public class HospitalResponse {
     private String phone;
     private Integer doctorCount;
     private Integer specializationCount;
+    private boolean enabled;
 }

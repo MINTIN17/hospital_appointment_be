@@ -11,4 +11,6 @@ public interface IHospitalService {
     Hospital getHospitalById(Long id);
     List<HospitalResponse> getAllHospital();
     String updateHospital(HospitalUpdateRequest hospitalUpdateRequest);
+    String Ban(Long id);
+    String unBan(Long id);
 }

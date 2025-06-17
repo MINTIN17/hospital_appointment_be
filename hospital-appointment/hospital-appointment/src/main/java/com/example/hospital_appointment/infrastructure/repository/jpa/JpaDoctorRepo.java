@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public interface JpaDoctorRepo extends JpaRepository<Doctor, Long> {
     List<Doctor> findBySpecialization_Hospital_Id(Long hospitalId);
+    @Query("SELECT d FROM Doctor d WHERE d.user.id = :userId")
+    Doctor findByUserId(@Param("userId") Long userId);
     Optional<Doctor> findByUserEmail(String email);
     @Query("SELECT COUNT(d) FROM Doctor d WHERE d.specialization.hospital.id = :hospitalId")
     int countByHospitalId(@Param("hospitalId") Long hospitalId);

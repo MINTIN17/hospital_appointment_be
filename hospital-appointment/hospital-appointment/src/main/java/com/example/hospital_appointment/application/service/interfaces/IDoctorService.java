@@ -1,5 +1,6 @@
 package com.example.hospital_appointment.application.service.interfaces;
 
+import com.example.hospital_appointment.api.dto.DoctorUpdateRequest;
 import com.example.hospital_appointment.domain.model.Doctor;
 import com.example.hospital_appointment.domain.model.Hospital;
 
@@ -10,6 +11,8 @@ public interface IDoctorService {
     Doctor save(Doctor doctor);
     List<Doctor> getDoctorsByHospital(Long hospital_id);
     Optional<Doctor> getDoctorByEmail(String email);
+    String updateDoctor(DoctorUpdateRequest doctor);
     String Ban(Long patient_id);
     String unBan(Long patient_id);
+
 }

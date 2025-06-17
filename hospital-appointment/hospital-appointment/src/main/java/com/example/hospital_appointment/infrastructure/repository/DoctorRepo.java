@@ -29,6 +29,12 @@ public class DoctorRepo implements IDoctorRepo {
     }
 
     @Override
+    public Doctor findByUserId(Long id) {
+        return jpaDoctorRepo.findByUserId(id);
+    }
+
+
+    @Override
     public Optional<Doctor> findById(Long id) {
         return jpaDoctorRepo.findById(id);
     }

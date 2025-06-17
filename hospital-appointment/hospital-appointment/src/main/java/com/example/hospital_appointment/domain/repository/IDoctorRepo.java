@@ -2,11 +2,13 @@ package com.example.hospital_appointment.domain.repository;
 
 import com.example.hospital_appointment.domain.model.Doctor;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 
 public interface IDoctorRepo {
     Doctor save(Doctor doctor);
+    Doctor findByUserId(Long id);
     Optional<Doctor> findById(Long id);
     List<Doctor> findByUser_Hospital_Id(Long hospitalId);
     Optional<Doctor> findByEmail(String email);

@@ -61,4 +61,14 @@ public class HospitalService implements IHospitalService {
         hospitalRepo.save(hospital);
         return "update success";
     }
+
+    @Override
+    public String Ban(Long id) {
+        return hospitalRepo.Ban(id);
+    }
+
+    @Override
+    public String unBan(Long id) {
+        return hospitalRepo.unBan(id);
+    }
 }

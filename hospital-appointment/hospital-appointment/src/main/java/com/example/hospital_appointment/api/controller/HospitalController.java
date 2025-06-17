@@ -78,4 +78,38 @@ public class HospitalController {
         return ResponseEntity.ok(hospitalService.updateHospital(request));
     }
 
+    @PutMapping("/ban")
+    public ResponseEntity<?> ban(@RequestParam("hospital_id") Long hospital_id, @RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+        }
+
+        String result = hospitalService.Ban(hospital_id);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/unban")
+    public ResponseEntity<?> unban(@RequestParam("hospital_id") Long hospital_id, @RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins only");
+        }
+
+        String result = hospitalService.unBan(hospital_id);
+
+        return ResponseEntity.ok(result);
+    }
+
 }

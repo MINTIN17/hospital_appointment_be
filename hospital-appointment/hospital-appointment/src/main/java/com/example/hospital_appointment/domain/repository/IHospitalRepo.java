@@ -9,5 +9,6 @@ public interface IHospitalRepo {
     Hospital save(Hospital hospital);
     Hospital getHospitalById(Long id);
     List<Hospital> findAll();
-
+    String Ban(Long id);
+    String unBan(Long id);
 }
