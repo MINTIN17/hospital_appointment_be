@@ -2,6 +2,7 @@ package com.example.hospital_appointment.api.controller;
 
 import com.example.hospital_appointment.api.dto.HospitalRequest;
 import com.example.hospital_appointment.api.dto.HospitalResponse;
+import com.example.hospital_appointment.api.dto.HospitalUpdateRequest;
 import com.example.hospital_appointment.api.dto.RegisterRequest;
 import com.example.hospital_appointment.application.service.interfaces.IHospitalService;
 import com.example.hospital_appointment.domain.model.Hospital;
@@ -49,7 +50,6 @@ public class HospitalController {
 
     @GetMapping("/getAllHospital")
     public ResponseEntity<?> getAllHospital(@RequestHeader("Authorization") String authHeader) {
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
         }
@@ -62,6 +62,20 @@ public class HospitalController {
 
         List<HospitalResponse> hospitals = hospitalService.getAllHospital();
         return ResponseEntity.ok(hospitals);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateHospital(@RequestHeader("Authorization") String authHeader,@RequestBody HospitalUpdateRequest request) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtUtil.checkToken(token, "ADMIN") && !jwtUtil.checkToken(token, "PATIENT")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Admins or Patients only");
+        }
+
+        return ResponseEntity.ok(hospitalService.updateHospital(request));
     }
 
 }

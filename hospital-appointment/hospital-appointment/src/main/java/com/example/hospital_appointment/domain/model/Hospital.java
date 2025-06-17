@@ -20,6 +20,6 @@ public class Hospital {
     private String name;
     private String address;
     private String phone;
-
+    private boolean enabled = true;
 }
 

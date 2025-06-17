@@ -67,4 +67,14 @@ public class DoctorService implements IDoctorService {
     public Optional<Doctor> getDoctorByEmail(String email) {
         return doctorRepo.findByEmail(email);
     }
+
+    @Override
+    public String Ban(Long patient_id) {
+        return doctorRepo.Ban(patient_id);
+    }
+
+    @Override
+    public String unBan(Long patient_id) {
+        return doctorRepo.unBan(patient_id);
+    }
 }

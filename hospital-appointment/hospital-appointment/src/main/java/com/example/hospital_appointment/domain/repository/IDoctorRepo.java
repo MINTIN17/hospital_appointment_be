@@ -11,4 +11,6 @@ public interface IDoctorRepo {
     List<Doctor> findByUser_Hospital_Id(Long hospitalId);
     Optional<Doctor> findByEmail(String email);
     Integer countByHospitalId(Long hospital_id);
+    String Ban(Long id);
+    String unBan(Long id);
 }

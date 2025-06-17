@@ -52,6 +52,7 @@ public class DoctorMapper {
                 .yearsOfExperience(doctor.getYearsOfExperience())
                 .specialization_name(doctor.getSpecialization().getName())
                 .hospital_name(doctor.getSpecialization().getHospital().getName())
+                .enabled(doctor.getUser().isEnabled())
                 .build();
 
     }

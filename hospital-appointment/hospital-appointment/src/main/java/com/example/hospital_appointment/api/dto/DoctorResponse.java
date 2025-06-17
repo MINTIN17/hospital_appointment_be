@@ -32,4 +32,5 @@ public class DoctorResponse
     private String specialization_name;
     private String hospital_name;
     private int yearsOfExperience;
+    private boolean enabled;
 }

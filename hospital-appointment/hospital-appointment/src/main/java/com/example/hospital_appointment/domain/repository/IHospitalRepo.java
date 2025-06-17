@@ -9,4 +9,5 @@ public interface IHospitalRepo {
     Hospital save(Hospital hospital);
     Hospital getHospitalById(Long id);
     List<Hospital> findAll();
+
 }

@@ -1,6 +1,7 @@
 package com.example.hospital_appointment.application.service;
 
 import com.example.hospital_appointment.api.dto.HospitalResponse;
+import com.example.hospital_appointment.api.dto.HospitalUpdateRequest;
 import com.example.hospital_appointment.application.service.interfaces.IHospitalService;
 import com.example.hospital_appointment.domain.model.Hospital;
 import com.example.hospital_appointment.domain.repository.IAppointmentRepo;
@@ -48,5 +49,16 @@ public class HospitalService implements IHospitalService {
         }
 
         return responses;
+    }
+
+    @Override
+    public String updateHospital(HospitalUpdateRequest hospitalUpdateRequest) {
+        Hospital hospital = hospitalRepo.getHospitalById(hospitalUpdateRequest.getId());
+        hospital.setAvatarUrl(hospitalUpdateRequest.getAvatarUrl());
+        hospital.setName(hospitalUpdateRequest.getName());
+        hospital.setAddress(hospitalUpdateRequest.getAddress());
+        hospital.setPhone(hospitalUpdateRequest.getPhone());
+        hospitalRepo.save(hospital);
+        return "update success";
     }
 }
