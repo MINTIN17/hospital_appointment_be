@@ -47,6 +47,15 @@ public class AuthController {
         return ResponseEntity.ok(patient);
     }
 
+    @PostMapping("/checkEmail")
+    public ResponseEntity<?> checkEmail(@RequestParam String email ) {
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.ok("Email not exist");
+        }
+        return ResponseEntity.ok("Email exist");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
@@ -99,8 +108,16 @@ public class AuthController {
     }
 
     @PutMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<?> forgotPassword(@RequestBody ResetPasswordRequest request, @RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
 
+        String token = authHeader.substring(7);
+        System.out.println(token);
+        if (!jwtUtil.checkToken(token, "OTP_VERIFIED")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+        }
         return ResponseEntity.ok(authService.forgotPassword(request));
     }
 
@@ -108,7 +125,7 @@ public class AuthController {
     public ResponseEntity<?> verifyOtp(@RequestParam String email, @RequestParam String otp) {
         boolean isValid = passwordResetOtpService.verifyOtp(email, otp);
         if (isValid) {
-            return ResponseEntity.ok("OTP OK");
+            return ResponseEntity.ok(jwtUtil.generateTemporaryToken(email));
         } else {
             return ResponseEntity.ok("Invalid OTP");
         }

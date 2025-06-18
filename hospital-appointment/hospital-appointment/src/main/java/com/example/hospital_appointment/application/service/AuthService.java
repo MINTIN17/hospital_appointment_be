@@ -134,34 +134,49 @@ public class AuthService implements IAuthService {
 
     @Override
     public String forgotPassword(ResetPasswordRequest request) {
-        User user = null;
-
-        if (request.getRole() == Role.PATIENT) {
-            Optional<Patient> optionalPatient = patientRepository.findByUserEmail(request.getEmail());
-            if (optionalPatient.isEmpty()) {
-                return "Patient not found";
-            }
-            Patient patient = optionalPatient.get();
-            user = patient.getUser();
-            String encodedNewPassword = passwordEncoder.encode(request.getPassword());
-            user.setPassword(encodedNewPassword);
-            patient.setUser(user);
-            patientRepository.save(patient);
-        } else if (request.getRole() == Role.DOCTOR) {
+        Optional<Patient> optionalPatient = patientRepository.findByUserEmail(request.getEmail());
+        if (optionalPatient.isEmpty()) {
             Optional<Doctor> optionalDoctor = doctorRepository.findByEmail(request.getEmail());
-            if (optionalDoctor.isEmpty()) {
-                return "Doctor not found";
-            }
             Doctor doctor = optionalDoctor.get();
-            user = doctor.getUser();
-
-            String encodedNewPassword = passwordEncoder.encode(request.getPassword());
-            user.setPassword(encodedNewPassword);
+            User user = doctor.getUser();
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             doctor.setUser(user);
             doctorRepository.save(doctor);
-        } else {
-            return "Invalid role";
         }
+        else {
+            Patient patient = optionalPatient.get();
+            User user = patient.getUser();
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            patient.setUser(user);
+            patientRepository.save(patient);
+        }
+
+//        if (request.getRole() == Role.PATIENT) {
+//            Optional<Patient> optionalPatient = patientRepository.findByUserEmail(request.getEmail());
+//            if (optionalPatient.isEmpty()) {
+//                return "Patient not found";
+//            }
+//            Patient patient = optionalPatient.get();
+//            user = patient.getUser();
+//            String encodedNewPassword = passwordEncoder.encode(request.getPassword());
+//            user.setPassword(encodedNewPassword);
+//            patient.setUser(user);
+//            patientRepository.save(patient);
+//        } else if (request.getRole() == Role.DOCTOR) {
+//            Optional<Doctor> optionalDoctor = doctorRepository.findByEmail(request.getEmail());
+//            if (optionalDoctor.isEmpty()) {
+//                return "Doctor not found";
+//            }
+//            Doctor doctor = optionalDoctor.get();
+//            user = doctor.getUser();
+//
+//            String encodedNewPassword = passwordEncoder.encode(request.getPassword());
+//            user.setPassword(encodedNewPassword);
+//            doctor.setUser(user);
+//            doctorRepository.save(doctor);
+//        } else {
+//            return "Invalid role";
+//        }
 
         return "Reset password successfully";
     }

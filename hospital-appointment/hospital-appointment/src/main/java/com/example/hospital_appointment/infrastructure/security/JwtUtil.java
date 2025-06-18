@@ -54,5 +54,19 @@ public class JwtUtil {
         }
     }
 
+    public String generateTemporaryToken(String email) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 15 * 60 * 1000);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", Role.OTP_VERIFIED);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(email)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS256, secret.getBytes())
+                .compact();
+    }
+
 }
 
